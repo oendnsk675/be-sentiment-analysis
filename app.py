@@ -102,6 +102,8 @@ class HitResource(Resource):
 		}
 
 	def get(self):
+		global hit_data
+		
 		return {
 			"msg": "Successfully retrive hit data",
 			"data": hit_data
