@@ -36,6 +36,15 @@ class Response(Resource):
 				else:
 					data['negative'] += 1
 			
+			data = dict(sorted(data.items(), key=lambda item: item[1]))
+			if list(data)[-1] == "positive":
+				data["summary"] = f"Berdasarkan hasil analisa kata {data_query['query']} sangat disukai"
+			elif list(data)[-1] == "positive":
+				data["summary"] = f"Berdasarkan hasil analisa kata {data_query['query']} biasa saja"
+			else:
+				data["summary"] = f"Berdasarkan hasil analisa kata {data_query['query']} sangat tidak disukai"
+
+
 			return {
 				'msg': 'successfully analysis the query!',
 				'data': data
