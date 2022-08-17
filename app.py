@@ -11,6 +11,9 @@ CORS(app)
 
 bearer_token = 'AAAAAAAAAAAAAAAAAAAAAKFxcgEAAAAAlXDfNaBugN5zcW4zB27xxg3ZD%2FU%3Doj9oSuZ0Nax1qi8Lgd3mBfAu9MN1EjNzgwa4qAjM2POSbvOpGj'
 
+unique_user = []
+hit_data = 0
+
 client = tweepy.Client(bearer_token=bearer_token)
 
 class Response(Resource):
@@ -59,7 +62,53 @@ class Response(Resource):
 				'msg': 'successfully ygy!'
 			} 
 		
+class User(Resource):
+	def get(self):
+		return {
+			"msg": "Successfully retrive data user",
+			"data": unique_user,
+			"size": len(unique_user)
+		}
+	
+	def post(self):
+		
+		data_query = request.json['data']
+		if data_query not in unique_user:
+			unique_user.append(data_query)
+		else:
+			return {
+				"msg": "User already exists",
+				"data": unique_user,
+				"size": len(unique_user)
+			}
+		
+		return {
+			"msg": "Successfully add data user",
+			"data": unique_user,
+			"size": len(unique_user)
+		}
                 
+
+class HitResource(Resource):
+
+	def post(self):
+		global hit_data
+
+		hit_data += 1
+
+		return {
+			"msg": "Successfully add hit data",
+			"data": hit_data
+		}
+
+	def get(self):
+		return {
+			"msg": "Successfully retrive hit data",
+			"data": hit_data
+		}
+
 api.add_resource(Response, '/api/analysis')
+api.add_resource(User, '/api/user')
+api.add_resource(HitResource, '/api/hit')
 if __name__ == '__main__':
 	app.run(debug=True)
