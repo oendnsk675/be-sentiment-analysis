@@ -1,3 +1,4 @@
+from ast import Try
 import tweepy
 from textblob import TextBlob
 import re
@@ -18,8 +19,13 @@ client = tweepy.Client(bearer_token=bearer_token)
 
 class Response(Resource):
 	def post(self):
+
+		
 		content_type = request.headers.get('Content-type')
 		if content_type == 'application/json':
+
+			# codingan model kalian taruh dari sini =================
+			
 			data_query = request.json
 			tweets = client.search_recent_tweets(query=data_query['query'],  tweet_fields=['created_at', 'public_metrics', 'author_id'],max_results=100)
 			data = {
@@ -31,7 +37,15 @@ class Response(Resource):
 			for tweet in tweets.data:
 				tweet_clean = ' '.join(re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)"," ",tweet.text).split())
 				analysis = TextBlob(tweet_clean)
-
+				
+				# try:
+				# 	print(analysis)
+				# 	analysis = analysis.translate(from_lang="id", to="en")
+				# 	print(analysis)
+				# 	exit()
+				# except Exception as e:
+				# 	pass
+				
 				if analysis.sentiment.polarity > 0.0:
 					data['positive'] += 1
 				elif analysis.sentiment.polarity == 0.0:
@@ -52,6 +66,9 @@ class Response(Resource):
 				'msg': 'successfully analysis the query!',
 				'data': data
 			}
+
+			# sampe sini ==================
+			
 		else:
 			return {
 				'msg': 'Content-Type not supported!'
@@ -103,7 +120,7 @@ class HitResource(Resource):
 
 	def get(self):
 		global hit_data
-		
+
 		return {
 			"msg": "Successfully retrive hit data",
 			"data": hit_data
